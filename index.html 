@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гендер-пати: угадай пол ребёнка</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --boy-color: #4a90e2;
+      --girl-color: #ff6fa8;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #1f2933;
+      --text-muted: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px 0;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    .bet-options {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .bet-option {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    }
+
+    .bet-option input {
+      accent-color: var(--boy-color);
+    }
+
+    .bet-option.boy {
+      border-color: rgba(74, 144, 226, 0.4);
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.08), #ffffff);
+    }
+
+    .bet-option.girl {
+      border-color: rgba(255, 111, 168, 0.4);
+      background: linear-gradient(135deg, rgba(255, 111, 168, 0.08), #ffffff);
+    }
+
+    .bet-option span.label-title {
+      font-weight: 600;
+      display: block;
+    }
+
+    .bet-option span.label-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .bet-option:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .stake-row {
+      margin-bottom: 16px;
+    }
+
+    .stake-row label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .stake-row input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-radius: 8px;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      flex: 1;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .result {
+      margin-top: 16px;
+      border-top: 1px dashed var(--border);
+      padding-top: 16px;
+      font-size: 14px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-card {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f3f4f6;
+    }
+
+    .stat-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .stat-value.boy {
+      color: var(--boy-color);
+    }
+
+    .stat-value.girl {
+      color: var(--girl-color);
+    }
+
+    .odds-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .odds-card {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #eef2ff;
+    }
+
+    .odds-label {
+      font-size: 12px;
+      color: #4f46e5;
+      margin-bottom: 2px;
+    }
+
+    .odds-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .payout-box {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+    }
+
+    .payout-title {
+      font-size: 12px;
+      color: #15803d;
+      margin-bottom: 2px;
+    }
+
+    .payout-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #166534;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 16px;
+      }
+
+      .bet-options {
+        flex-direction: column;
+      }
+
+      .controls-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Гендер‑пати: угадай пол ребёнка</h1>
+      <p class="subtitle">
+        Весёлая мини‑игра: выбирай «мальчик» или «девочка», смотри статистику гостей и условные коэффициенты.
+      </p>
+
+      <form id="bet-form">
+        <div class="bet-options">
+          <label class="bet-option boy">
+            <input type="radio" name="gender" value="boy" checked>
+            <div>
+              <span class="label-title">Мальчик</span>
+              <span class="label-sub">Синий лагерь</span>
+            </div>
+          </label>
+
+          <label class="bet-option girl">
+            <input type="radio" name="gender" value="girl">
+            <div>
+              <span class="label-title">Девочка</span>
+              <span class="label-sub">Розовый лагерь</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="stake-row">
+          <label for="stake-amount">Сумма «ставки» (для расчёта выигрыша, без реальных денег):</label>
+          <input type="number" id="stake-amount" value="100" min="1">
+        </div>
+
+        <div class="controls-row">
+          <button type="submit" class="btn-primary">Сделать ставку</button>
+          <button type="button" class="btn-secondary" id="reset-btn">Сбросить статистику</button>
+        </div>
+      </form>
+
+      <div class="result">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Всего ставок</div>
+            <div class="stat-value" id="total-bets">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Ваш выбор</div>
+            <div class="stat-value" id="last-choice">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">На мальчика</div>
+            <div class="stat-value boy" id="boy-count">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">На девочку</div>
+            <div class="stat-value girl" id="girl-count">0</div>
+          </div>
+        </div>
+
+        <div class="odds-grid">
+          <div class="odds-card">
+            <div class="odds-label">Коэффициент на мальчика</div>
+            <div class="odds-value" id="boy-odds">–</div>
+          </div>
+          <div class="odds-card">
+            <div class="odds-label">Коэффициент на девочку</div>
+            <div class="odds-value" id="girl-odds">–</div>
+          </div>
+        </div>
+
+        <div class="payout-box">
+          <div class="payout-title">Ваш потенциальный «выигрыш» при верном угадывании</div>
+          <div class="payout-value" id="payout">–</div>
+        </div>
+
+        <p class="note">
+          Это не азартная игра и не сервис по приёму реальных ставок.  
+          Это просто фан‑страница для гендер‑пати: никакие деньги не принимаются и не выплачиваются.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const bets = { boy: 0, girl: 0 };
+
+    const form = document.getElementById('bet-form');
+    const resetBtn = document.getElementById('reset-btn');
+    const totalBetsEl = document.getElementById('total-bets');
+    const boyCountEl = document.getElementById('boy-count');
+    const girlCountEl = document.getElementById('girl-count');
+    const boyOddsEl = document.getElementById('boy-odds');
+    const girlOddsEl = document.getElementById('girl-odds');
+    const payoutEl = document.getElementById('payout');
+    const stakeInput = document.getElementById('stake-amount');
+    const lastChoiceEl = document.getElementById('last-choice');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const gender = formData.get('gender'); // 'boy' или 'girl'
+      const stake = parseFloat(stakeInput.value) || 0;
+
+      if (gender === 'boy') {
+        bets.boy += 1;
+        lastChoiceEl.textContent = 'Мальчик';
+        lastChoiceEl.classList.remove('girl');
+        lastChoiceEl.classList.add('boy');
+      } else if (gender === 'girl') {
+        bets.girl += 1;
+        lastChoiceEl.textContent = 'Девочка';
+        lastChoiceEl.classList.remove('boy');
+        lastChoiceEl.classList.add('girl');
+      }
+
+      updateStatsAndOdds(gender, stake);
+      saveState();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      bets.boy = 0;
+      bets.girl = 0;
+      stakeInput.value = 100;
+      lastChoiceEl.textContent = '—';
+      lastChoiceEl.classList.remove('boy', 'girl');
+      updateStatsAndOdds(null, 0);
+      saveState();
+    });
+
+    function updateStatsAndOdds(lastGender, stake) {
+      const total = bets.boy + bets.girl;
+
+      totalBetsEl.textContent = total;
+      boyCountEl.textContent = bets.boy;
+      girlCountEl.textContent = bets.girl;
+
+      if (total === 0) {
+        boyOddsEl.textContent = '–';
+        girlOddsEl.textContent = '–';
+        payoutEl.textContent = '–';
+        return;
+      }
+
+      const pBoy = bets.boy / total;
+      const pGirl = bets.girl / total;
+
+      const boyOdds = pBoy > 0 ? (1 / pBoy) : 0;
+      const girlOdds = pGirl > 0 ? (1 / pGirl) : 0;
+
+      boyOddsEl.textContent = boyOdds ? boyOdds.toFixed(2) : '∞';
+      girlOddsEl.textContent = girlOdds ? girlOdds.toFixed(2) : '∞';
+
+      let currentOdds = null;
+      if (lastGender === 'boy') currentOdds = boyOdds;
+      if (lastGender === 'girl') currentOdds = girlOdds;
+
+      if (!currentOdds || !stake) {
+        payoutEl.textContent = '–';
+      } else {
+        const payout = stake * currentOdds;
+        payoutEl.textContent = payout.toFixed(2);
+      }
+    }
+
+    // Простое сохранение статистики в localStorage, чтобы при обновлении страницы не терять локальные данные
+    function saveState() {
+      const state = {
+        boy: bets.boy,
+        girl: bets.girl
+      };
+      try {
+        localStorage.setItem('genderPartyBets', JSON.stringify(state));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem('genderPartyBets');
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (typeof state.boy === 'number') bets.boy = state.boy;
+        if (typeof state.girl === 'number') bets.girl = state.girl;
+        updateStatsAndOdds(null, parseFloat(stakeInput.value) || 0);
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
